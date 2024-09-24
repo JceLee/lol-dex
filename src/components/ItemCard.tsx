@@ -1,10 +1,10 @@
 // components/ItemCard.tsx
 
-import { ItemType } from "@/types/Item";
 import React from "react";
+import { Item } from "@/types/Item";
 
 interface ItemCardProps {
-  item: ItemType;
+  item: Item;
 }
 
 export default function ItemCard({ item }: ItemCardProps) {
@@ -12,7 +12,7 @@ export default function ItemCard({ item }: ItemCardProps) {
 
   return (
     <div className="border border-[#E8E8E8] p-2 flex justify-start items-center flex-col  gap-2 max-h-[400px] overflow-auto ">
-      <img src={image} alt={name} className="w-[64px] h-[64px]" />
+      <img src={image.full} alt={name} className="w-[64px] h-[64px]" />
       <h2 className="text-center">{name}</h2>
       <p className="text-[#53be81]">
         <strong>가격:</strong> {gold.total}

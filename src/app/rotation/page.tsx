@@ -1,24 +1,29 @@
 // app/rotation/page.tsx
-
 "use client";
 
 import { useEffect, useState } from "react";
+import { Champion } from "@/types/Champion";
 import { getChampionRotation } from "@/utils/riotApi";
 import ChampionCard from "@/components/ChampionCard";
-import { Champion } from "@/types/Champion";
+
+interface RotationData {
+  freeChampions: Champion[];
+  version: string;
+}
 
 export default function RotationPage() {
-  const [champions, setChampions] = useState<Champion[]>([]);
+  const [rotationData, setRotationData] = useState<RotationData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchRotation() {
       try {
-        const data = await getChampionRotation();
-        setChampions(data);
-      } catch (error) {
-        console.log(error);
-        console.error("로테이션 정보를 가져오는 중 오류가 발생했습니다.");
+        const data: RotationData = await getChampionRotation();
+        setRotationData(data);
+      } catch (err) {
+        console.log(err);
+        setError("로테이션 데이터를 가져오는 데 실패했습니다.");
       } finally {
         setLoading(false);
       }
@@ -28,15 +33,25 @@ export default function RotationPage() {
   }, []);
 
   if (loading) {
-    return <p>로딩 중...</p>;
+    return <div>로딩 중...</div>;
   }
+
+  if (error || !rotationData) {
+    return <div>{error || "데이터를 가져올 수 없습니다."}</div>;
+  }
+
+  const { freeChampions, version } = rotationData;
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4">이번 주 무료 챔피언</h1>
-      <div className="grid grid-cols-4 gap-4">
-        {champions.map((champion) => (
-          <ChampionCard key={champion.id} champion={champion} />
+      <h1 className="text-3xl font-bold mb-4">챔피언 로테이션</h1>
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+        {freeChampions.map((champion) => (
+          <ChampionCard
+            key={champion.id}
+            champion={champion}
+            version={version}
+          />
         ))}
       </div>
     </div>

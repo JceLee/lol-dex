@@ -1,27 +1,23 @@
+// types/Item.ts
 export interface Item {
-  id: string;
+  id: number;
   name: string;
   description: string;
-  image: { full: string };
+  plaintext: string;
   gold: {
     base: number;
     total: number;
     sell: number;
     purchasable: boolean;
   };
-  stats: Record<string, number>;
-}
-
-export interface ItemType {
-  id: string;
-  name: string;
-  description: string;
-  image: string;
-  gold: {
-    base: number;
-    total: number;
-    sell: number;
-    purchasable: boolean;
+  image: {
+    full: string;
+    sprite: string;
+    group: string;
+    x: number;
+    y: number;
+    w: number;
+    h: number;
   };
-  stats: Record<string, number>;
+  // 추가적인 필드는 필요에 따라 확장 가능합니다.
 }

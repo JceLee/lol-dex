@@ -1,52 +1,53 @@
 // app/champions/[id]/page.tsx
-
-import { getChampionById } from "@/utils/riotApi";
+import { fetchChampionDetail } from "@/utils/serverApi";
 import Image from "next/image";
+import { Metadata } from "next";
 
-interface Params {
-  params: {
-    id: string;
-  };
+interface ChampionDetailPageProps {
+  params: { id: string };
 }
 
-export async function generateMetadata({ params }: Params) {
-  const champion = await getChampionById(params.id);
+export async function generateMetadata({
+  params,
+}: ChampionDetailPageProps): Promise<Metadata> {
+  const champion = await fetchChampionDetail(params.id);
   return {
-    title: `${champion.name} - 리그 오브 레전드`,
-    description: champion.title,
+    title: champion
+      ? `${champion.name} - My Riot App`
+      : "챔피언 상세 정보 - My Riot App",
+    description: champion ? champion.lore : "챔피언 상세 정보",
   };
 }
 
-export default async function ChampionDetailPage({ params }: Params) {
-  const { id } = params;
-  const champion = await getChampionById(id);
+export default async function ChampionDetailPage({
+  params,
+}: ChampionDetailPageProps) {
+  const champion = await fetchChampionDetail(params.id);
+
+  if (!champion) {
+    return <div>챔피언을 찾을 수 없습니다.</div>;
+  }
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold mb-4">{champion.name}</h1>
-      <h2 className="text-xl font-bold mb-4 text-red-300">{champion.title}</h2>
+    <div className="max-w-3xl mx-auto">
+      <h1 className="text-4xl font-bold mb-4">{champion.name}</h1>
+      <h2 className="text-2xl text-gray-600 mb-4">{champion.title}</h2>
       <Image
-        src={champion.image}
+        src={`https://ddragon.leagueoflegends.com/cdn/12.23.1/img/champion/${champion.image.full}`}
         alt={champion.name}
-        width={240}
-        height={240}
+        width={200}
+        height={200}
+        className="mx-auto"
       />
-      <p className="mt-4 text-gray-500">{champion.lore}</p>
-      <p className="mt-10 mb-4 text-red-300 text-xl">{`${champion.name}의 스킬`}</p>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {champion.abilities.map((ability, index) => (
-          <div key={index} className="border p-4 rounded shadow-md">
-            <h3 className="text-lg font-semibold mb-2">{ability.name}</h3>
-            <Image
-              src={ability.image as unknown as string}
-              alt={ability.name}
-              width={64}
-              height={64}
-              className="mb-2"
-            />
-            <p>{ability.description}</p>
-          </div>
-        ))}
+      <p className="mt-4">{champion.lore}</p>
+      <div className="mt-6">
+        <h3 className="text-xl font-semibold">스탯</h3>
+        <ul className="list-disc list-inside">
+          <li>공격력: {champion.info.attack}</li>
+          <li>방어력: {champion.info.defense}</li>
+          <li>마법력: {champion.info.magic}</li>
+          <li>난이도: {champion.info.difficulty}</li>
+        </ul>
       </div>
     </div>
   );

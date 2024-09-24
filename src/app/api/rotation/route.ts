@@ -1,15 +1,13 @@
 // app/api/rotation/route.ts
-
 import { NextResponse } from "next/server";
 import { ChampionRotation } from "@/types/ChampionRotation";
+import { fetchChampionList, fetchLatestVersion } from "@/utils/serverApi";
 
 export async function GET() {
-  const RIOT_API_KEY = process.env.RIOT_API_KEY;
+  const apiKey = process.env.RIOT_API_KEY;
 
-  if (!RIOT_API_KEY) {
-    return NextResponse.json({
-      message: "RIOT_API_KEY가 설정되지 않았습니다.",
-    });
+  if (!apiKey) {
+    return NextResponse.json({ error: "API 키가 설정되지 않았습니다." });
   }
 
   try {
@@ -17,24 +15,31 @@ export async function GET() {
       "https://kr.api.riotgames.com/lol/platform/v3/champion-rotations",
       {
         headers: {
-          "X-Riot-Token": RIOT_API_KEY,
+          "X-Riot-Token": apiKey,
         },
       },
     );
 
     if (!response.ok) {
-      return NextResponse.json({
-        message: "챔피언 로테이션 데이터를 가져오는 중 오류가 발생했습니다.",
-      });
+      return NextResponse.json({ error: "Riot API 호출에 실패했습니다." });
     }
 
-    const rotationData: ChampionRotation = await response.json();
+    const data: ChampionRotation = await response.json();
 
-    return NextResponse.json(rotationData);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    // 챔피언 목록과 최신 버전을 가져옵니다.
+    const [champions, version] = await Promise.all([
+      fetchChampionList(),
+      fetchLatestVersion(),
+    ]);
+
+    // freeChampionIds를 기반으로 챔피언 상세 정보를 매핑합니다.
+    const freeChampions = champions.filter((champion) =>
+      data.freeChampionIds.includes(parseInt(champion.key)),
+    );
+
+    return NextResponse.json({ freeChampions, version });
   } catch (error) {
-    return NextResponse.json({
-      message: "챔피언 로테이션 데이터를 가져오는 중 오류가 발생했습니다.",
-    });
+    console.error(error);
+    return NextResponse.json({ error: "서버 에러가 발생했습니다." });
   }
 }

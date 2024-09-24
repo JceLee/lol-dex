@@ -2,6 +2,7 @@
 
 import "./globals.css";
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 export const metadata = {
   title: "리그 오브 레전드 정보 앱",
@@ -15,9 +16,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ko">
-      <body>
+      <body className="py-[100px]">
         <Header />
         <main className="container mx-auto mt-10">{children}</main>
+        <Footer />
       </body>
     </html>
   );

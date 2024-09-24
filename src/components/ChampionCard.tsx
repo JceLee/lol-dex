@@ -1,26 +1,28 @@
 // components/ChampionCard.tsx
-
-import { Champion } from "@/types/Champion";
-import Image from "next/image";
 import Link from "next/link";
+import Image from "next/image";
+import { Champion } from "@/types/Champion";
 
 interface ChampionCardProps {
   champion: Champion;
+  version: string;
 }
 
-export default function ChampionCard({ champion }: ChampionCardProps) {
+export default function ChampionCard({ champion, version }: ChampionCardProps) {
   return (
-    <Link href={`/champions/${champion.id}`}>
-      <div className="border p-4 rounded hover:shadow-lg flex flex-col gap-2 justify-center items-center">
-        <Image
-          src={champion.image}
-          alt={champion.name}
-          width={200}
-          height={200}
-        />
-        <h2 className="text-xl mt-2">{champion.name}</h2>
-        <p className="text-gray-500">{champion.title}</p>
-      </div>
+    <Link
+      href={`/champions/${champion.id}`}
+      className="border rounded p-4 hover:shadow-lg"
+    >
+      <Image
+        src={`https://ddragon.leagueoflegends.com/cdn/${version}/img/champion/${champion.image.full}`}
+        alt={champion.name}
+        width={100}
+        height={100}
+        className="mx-auto"
+      />
+      <h2 className="mt-2 text-xl font-semibold">{champion.name}</h2>
+      <p className="text-gray-500">{champion.title}</p>
     </Link>
   );
 }
