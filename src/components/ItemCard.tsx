@@ -1,10 +1,10 @@
 // components/ItemCard.tsx
 
-import { Item } from "@/types/Item";
+import { ItemType } from "@/types/Item";
 import React from "react";
 
 interface ItemCardProps {
-  item: Item;
+  item: ItemType;
 }
 
 export default function ItemCard({ item }: ItemCardProps) {

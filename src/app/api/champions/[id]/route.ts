@@ -1,7 +1,7 @@
 // app/api/champions/[id]/route.ts
 
 import { NextResponse } from "next/server";
-import { ChampionDetail } from "@/types/Champion";
+import { Ability, ChampionDetail } from "@/types/Champion";
 
 interface Params {
   params: {
@@ -27,10 +27,7 @@ export async function GET(request: Request, { params }: Params) {
     const championData = await championRes.json();
 
     if (!championData.data[id]) {
-      return NextResponse.json(
-        { message: "존재하지 않는 챔피언입니다." },
-        { status: 404 },
-      );
+      return NextResponse.json({ message: "존재하지 않는 챔피언입니다." });
     }
 
     const championInfo = championData.data[id];
@@ -42,7 +39,7 @@ export async function GET(request: Request, { params }: Params) {
       title: championInfo.title,
       image: `https://ddragon.leagueoflegends.com/cdn/${latestVersion}/img/champion/${championInfo.image.full}`,
       lore: championInfo.lore,
-      abilities: championInfo.spells.map((spell: any) => ({
+      abilities: championInfo.spells.map((spell: Ability) => ({
         name: spell.name,
         description: spell.description,
         image: `https://ddragon.leagueoflegends.com/cdn/${latestVersion}/img/spell/${spell.image.full}`,
@@ -51,10 +48,10 @@ export async function GET(request: Request, { params }: Params) {
     };
 
     return NextResponse.json(championDetail);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
-    return NextResponse.json(
-      { message: "챔피언 정보를 가져오는 중 오류가 발생했습니다." },
-      { status: 500 },
-    );
+    return NextResponse.json({
+      message: "챔피언 정보를 가져오는 중 오류가 발생했습니다.",
+    });
   }
 }

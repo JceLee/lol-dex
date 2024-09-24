@@ -7,10 +7,9 @@ export async function GET() {
   const RIOT_API_KEY = process.env.RIOT_API_KEY;
 
   if (!RIOT_API_KEY) {
-    return NextResponse.json(
-      { message: "RIOT_API_KEY가 설정되지 않았습니다." },
-      { status: 500 },
-    );
+    return NextResponse.json({
+      message: "RIOT_API_KEY가 설정되지 않았습니다.",
+    });
   }
 
   try {
@@ -24,21 +23,18 @@ export async function GET() {
     );
 
     if (!response.ok) {
-      return NextResponse.json(
-        {
-          message: "챔피언 로테이션 데이터를 가져오는 중 오류가 발생했습니다.",
-        },
-        { status: response.status },
-      );
+      return NextResponse.json({
+        message: "챔피언 로테이션 데이터를 가져오는 중 오류가 발생했습니다.",
+      });
     }
 
     const rotationData: ChampionRotation = await response.json();
 
     return NextResponse.json(rotationData);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
-    return NextResponse.json(
-      { message: "챔피언 로테이션 데이터를 가져오는 중 오류가 발생했습니다." },
-      { status: 500 },
-    );
+    return NextResponse.json({
+      message: "챔피언 로테이션 데이터를 가져오는 중 오류가 발생했습니다.",
+    });
   }
 }

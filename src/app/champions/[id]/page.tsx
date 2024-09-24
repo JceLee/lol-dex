@@ -21,8 +21,6 @@ export default async function ChampionDetailPage({ params }: Params) {
   const { id } = params;
   const champion = await getChampionById(id);
 
-  console.log(champion);
-
   return (
     <div>
       <h1 className="text-3xl font-bold mb-4">{champion.name}</h1>
@@ -40,7 +38,7 @@ export default async function ChampionDetailPage({ params }: Params) {
           <div key={index} className="border p-4 rounded shadow-md">
             <h3 className="text-lg font-semibold mb-2">{ability.name}</h3>
             <Image
-              src={ability.image}
+              src={ability.image as unknown as string}
               alt={ability.name}
               width={64}
               height={64}

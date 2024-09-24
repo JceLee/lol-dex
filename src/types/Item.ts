@@ -1,17 +1,27 @@
-// types/Item.ts
-
 export interface Item {
   id: string;
   name: string;
   description: string;
-  image: string; // 이미지 URL
+  image: { full: string };
   gold: {
     base: number;
     total: number;
     sell: number;
     purchasable: boolean;
   };
-  stats: {
-    [key: string]: number;
+  stats: Record<string, number>;
+}
+
+export interface ItemType {
+  id: string;
+  name: string;
+  description: string;
+  image: string;
+  gold: {
+    base: number;
+    total: number;
+    sell: number;
+    purchasable: boolean;
   };
+  stats: Record<string, number>;
 }

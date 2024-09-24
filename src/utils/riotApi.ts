@@ -1,12 +1,13 @@
-// utils/riotApi.ts
-
-import { Champion, ChampionDetail } from "@/types/Champion";
-import { Item } from "@/types/Item";
+import {
+  Ability,
+  Champion,
+  ChampionData,
+  ChampionDetail,
+} from "@/types/Champion";
+import { ItemType } from "@/types/Item";
 import { ChampionRotation } from "@/types/ChampionRotation";
 
 const HOST = process.env.NEXT_PUBLIC_HOST;
-
-let idToChampionMapCache: { [key: string]: string } | null = null;
 
 export async function getChampionList(): Promise<Champion[]> {
   const response = await fetch(`${HOST}/api/champions`);
@@ -28,12 +29,14 @@ export async function getIdToChampionMap(): Promise<{ [key: string]: string }> {
   const championsRes = await fetch(
     `https://ddragon.leagueoflegends.com/cdn/${latestVersion}/data/ko_KR/champion.json`,
   );
-  const championsData = await championsRes.json();
+  const championsData = (await championsRes.json()) as {
+    data: Record<string, ChampionData>;
+  };
 
   // ID와 챔피언 이름 매핑
   const idToChampionMap: { [key: string]: string } = {};
 
-  Object.values(championsData.data).forEach((champion: any) => {
+  Object.values(championsData.data).forEach((champion) => {
     idToChampionMap[champion.key] = champion.id;
   });
 
@@ -80,7 +83,7 @@ export async function getChampionById(id: string): Promise<ChampionDetail> {
     title: championInfo.title,
     image: `https://ddragon.leagueoflegends.com/cdn/${latestVersion}/img/champion/${championInfo.image.full}`,
     lore: championInfo.lore,
-    abilities: championInfo.spells.map((spell: any) => ({
+    abilities: championInfo.spells.map((spell: Ability) => ({
       name: spell.name,
       description: spell.description,
       image: `https://ddragon.leagueoflegends.com/cdn/${latestVersion}/img/spell/${spell.image.full}`,
@@ -91,7 +94,7 @@ export async function getChampionById(id: string): Promise<ChampionDetail> {
   return championDetail;
 }
 
-export async function getItemList(): Promise<Item[]> {
+export async function getItemList(): Promise<ItemType[]> {
   const response = await fetch(`${HOST}/api/items`);
   if (!response.ok) {
     throw new Error("아이템 목록을 가져오는 중 오류가 발생했습니다.");
@@ -100,7 +103,7 @@ export async function getItemList(): Promise<Item[]> {
 }
 
 export async function getChampionRotation(): Promise<Champion[]> {
-  const response = await fetch("/api/rotation");
+  const response = await fetch(`${HOST}/api/rotation`);
 
   if (!response.ok) {
     throw new Error("챔피언 로테이션 정보를 가져오는 중 오류가 발생했습니다.");

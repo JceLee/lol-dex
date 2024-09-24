@@ -17,6 +17,7 @@ export default function RotationPage() {
         const data = await getChampionRotation();
         setChampions(data);
       } catch (error) {
+        console.log(error);
         console.error("로테이션 정보를 가져오는 중 오류가 발생했습니다.");
       } finally {
         setLoading(false);
